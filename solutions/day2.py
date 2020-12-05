@@ -1,7 +1,7 @@
 import re, tools.general
 
 input_data     = tools.general.load_input("day2.txt").split('\n')
-pattern        = re.compile("([0-9]+)-([0-9]+) ([a-z]): ([a-z]+)")
+pattern        = re.compile("^([0-9]+)-([0-9]+) ([a-z]): ([a-z]+)$")
 valid1, valid2 = 0, 0
 
 for i in input_data:
