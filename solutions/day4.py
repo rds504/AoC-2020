@@ -1,5 +1,5 @@
+import re
 from abc import ABC, abstractmethod
-from re import compile
 from tools.general import load_input
 from tools.lists import dict_from
 
@@ -36,7 +36,7 @@ class BoundedIntValidator(FieldValidator):
 class SimpleRegexValidator(FieldValidator):
 
     def __init__(self, pattern: str):
-        self._pattern = compile(pattern)
+        self._pattern = re.compile(pattern)
 
     @property
     def pattern(self):
@@ -60,7 +60,7 @@ class ValueListValidator(FieldValidator):
 class HeightValidator(FieldValidator):
 
     def __init__(self):
-        self._pattern      = compile("^([0-9]+)(cm|in)$")
+        self._pattern      = re.compile("^([0-9]+)(cm|in)$")
         self._cm_validator = BoundedIntValidator(150, 193)
         self._in_validator = BoundedIntValidator( 59,  76)
 
@@ -69,7 +69,7 @@ class HeightValidator(FieldValidator):
         m = self._pattern.match(data)
 
         if m:
-            quant = int(m.group(1))
+            quant = m.group(1)
             units = m.group(2)
 
             if units == "cm":
@@ -82,28 +82,26 @@ class HeightValidator(FieldValidator):
 input_data = load_input("day4.txt").split('\n\n')
 
 validators = {
-    'byr' : BoundedIntValidator(1920, 2002),
-    'iyr' : BoundedIntValidator(2010, 2020),
-    'ecl' : ValueListValidator(['amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth']),
-    'eyr' : BoundedIntValidator(2020, 2030),
-    'hcl' : SimpleRegexValidator("^#[0-9a-f]{6}$"),
-    'hgt' : HeightValidator(),
-    'pid' : SimpleRegexValidator("^[0-9]{9}$")
+    'byr': BoundedIntValidator(1920, 2002),
+    'iyr': BoundedIntValidator(2010, 2020),
+    'ecl': ValueListValidator(['amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth']),
+    'eyr': BoundedIntValidator(2020, 2030),
+    'hcl': SimpleRegexValidator("^#[0-9a-f]{6}$"),
+    'hgt': HeightValidator(),
+    'pid': SimpleRegexValidator("^[0-9]{9}$")
 }
 
-valid1, valid2 = 0, 0
+all_fields_present = 0
+all_fields_valid   = 0
 
 for passport in input_data:
 
     fields = dict_from(passport.split())
 
     if all(field in fields for field in validators):
-        valid1 += 1
-        for field in validators:
-            if not validators[field].valid(fields[field]):
-                break
-        else:
-            valid2 += 1
+        all_fields_present += 1
+        if all(validators[field].valid(fields[field]) for field in validators):
+            all_fields_valid += 1
 
-print(f"Part 1 => {valid1}")
-print(f"Part 2 => {valid2}")
+print(f"Part 1 => {all_fields_present}")
+print(f"Part 2 => {all_fields_valid}")
