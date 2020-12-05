@@ -18,3 +18,16 @@ def contains(haystack: list, needle, presorted=False):
         return find_binsearch(haystack, needle) != -1
     
     return needle in haystack
+
+def dict_from(data: list, separator=':'):
+
+    d = {}
+
+    for i in data:
+        try:
+            key, value = i.split(separator)
+            d[key] = value
+        except ValueError:
+            pass
+
+    return d
