@@ -1,24 +1,16 @@
-from tools import general, lists
+from itertools import combinations
+from functools import reduce
+from operator import mul
+from tools.general import load_input_ints
 
-input_data = sorted(int(i) for i in general.load_input("day1.txt").split())
-    
-for i in input_data:
-    j = 2020 - i
-    if lists.contains(input_data, j, True):
-        print(f"Part 1 => {i * j}")
-        break
-    
-found_triple = False
-for i in input_data:
-    if found_triple:
-        break
-    d = 2020 - i
-    for j in input_data:
-        if i != j:
-            k = d - j
-            if k <= 0:
-                break
-            if lists.contains(input_data, k, True):
-                print(f"Part 2 => {i * j * k}")
-                found_triple = True
-                break
+def find_tuple_with_sum(entry_list, target_sum, tuple_size):
+
+    for combo in combinations(entry_list, tuple_size):
+        if sum(combo) == target_sum:
+            return combo
+
+    return None
+
+expense_entries = load_input_ints("day1.txt")
+print(f"Part 1 => {reduce(mul, find_tuple_with_sum(expense_entries, 2020, 2))}")
+print(f"Part 2 => {reduce(mul, find_tuple_with_sum(expense_entries, 2020, 3))}")
