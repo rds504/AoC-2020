@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      PYLINT_EXCLUDES: 'C0114,C0116'
+      PYLINT_FLAGS: '--disable=C0114,C0116 --fail-under=6'
 
     steps:
     - uses: actions/checkout@v2
@@ -23,8 +23,8 @@ jobs:
     - name: Linting tools
       working-directory: ./tools
       run: |
-        pylint --disable=${{env.PYLINT_EXCLUDES}} `ls|grep .py$|xargs`
+        pylint ${{env.PYLINT_FLAGS}} `ls|grep .py$|xargs`
     - name: Linting solutions
       working-directory: ./solutions
       run: |
-        pylint --disable=${{env.PYLINT_EXCLUDES}} `ls|grep .py$|xargs`
+        pylint ${{env.PYLINT_FLAGS}} `ls|grep .py$|xargs`
