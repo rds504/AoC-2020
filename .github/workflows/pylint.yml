@@ -7,6 +7,9 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    env:
+      PYLINT_FLAGS: '--disable=C0114,C0116 --fail-under=6'
+
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python 3.8
@@ -17,7 +20,11 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install pylint
-    - name: Analysing the code with pylint
+    - name: Linting tools
+      working-directory: ./tools
       run: |
-        cd tools
-        pylint `ls|grep .py$|xargs`
+        pylint ${{env.PYLINT_FLAGS}} `ls|grep .py$|xargs`
+    - name: Linting solutions
+      working-directory: ./solutions
+      run: |
+        pylint ${{env.PYLINT_FLAGS}} `ls|grep .py$|xargs`
