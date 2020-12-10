@@ -14,6 +14,7 @@ for i, a in enumerate(chain[1:]):
 
 print(f"Part 1 => {diff1 * diff3}")
 
+# Number of possible paths from the socket to each adaptor
 paths = {0:1}
 
 for i in adaptors:
