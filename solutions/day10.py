@@ -18,12 +18,9 @@ print(f"Part 1 => {diff1 * diff3}")
 # Trivial path to the socket itself
 paths = {0:1}
 
-# Number of paths to any adaptor is sum of number of paths to each adaptors that can connect to it
+# Number of paths to any adaptor is sum of number of paths to each adaptor that can connect to it
 for i in adaptors:
-    n_paths = 0
-    for j in range(i - 3, i):
-        n_paths += paths.get(j, 0)
-    paths[i] = n_paths
+    paths[i] = sum(paths.get(j, 0) for j in range(i - 3, i))
 
 # Only the highest rated adaptor can connect to the device
 print(f"Part 2 => {paths[adaptors[-1]]}")
