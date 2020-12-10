@@ -1,5 +1,5 @@
 from tools.general import load_input_ints
-    
+
 adaptors = sorted(load_input_ints("day10.txt"))
 
 chain = [0] + adaptors + [adaptors[-1] + 3]
