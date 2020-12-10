@@ -1,11 +1,11 @@
 import re
-from tools.general import load_input
+from tools.general import load_input_list
 
-def run_program(code, swap_instr=None):
+def run_program(program_code, swap_instr=None):
 
     accumulator   = 0
     current_instr = 0
-    end_instr     = len(code)
+    end_instr     = len(program_code)
     terminated    = False
     instrs_run    = set()
     instr_pattern = re.compile("^(acc|jmp|nop) ([+-])([0-9]+)$")
@@ -13,10 +13,10 @@ def run_program(code, swap_instr=None):
     while (not terminated) and (current_instr not in instrs_run):
 
         instrs_run.add(current_instr)
-        instr_match = instr_pattern.match(code[current_instr])
+        instr_match = instr_pattern.match(program_code[current_instr])
 
         if not instr_match:
-            raise ValueError(f"Invalid instruction: \"{code[current_instr]}\"")
+            raise ValueError(f"Invalid instruction: \"{program_code[current_instr]}\"")
 
         opr = instr_match.group(1)
         sgn = instr_match.group(2)
@@ -45,11 +45,11 @@ def run_program(code, swap_instr=None):
 
     return (terminated, accumulator)
 
-code = load_input("day8.txt").split('\n')
+code = load_input_list("day8.txt")
 
 print(f"Part 1 => {run_program(code)[1]}")
 
-for swap_instr in range(len(code)):
-    terminates, accumulator = run_program(code, swap_instr)
-    if terminates:
-        print(f"Part 2 => {accumulator}")
+for swap_line in range(len(code)):
+    terms, accum = run_program(code, swap_line)
+    if terms:
+        print(f"Part 2 => {accum}")
