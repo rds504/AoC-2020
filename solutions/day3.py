@@ -1,11 +1,13 @@
-from tools.general import load_input
+from functools import reduce
+from operator import mul
+from tools.general import load_input_list
 
 def count_trees(tree_map, slope):
 
     trees  = 0
     rows   = len(tree_map)
     cols   = len(tree_map[0])
-    x,y    = 0,0
+    x, y   = 0,0
     dx, dy = slope
 
     while y < rows:
@@ -16,16 +18,10 @@ def count_trees(tree_map, slope):
 
     return trees
 
-def prod_slopes(tree_map, slopes):
+input_data = load_input_list("day3.txt")
 
-    product = 1
-
-    for slope in slopes:
-        product *= count_trees(tree_map, slope)
-
-    return product
-
-input_data = load_input("day3.txt").split('\n')
+def prod_slopes(tree_map, slopes_list):
+    return reduce(mul, (count_trees(tree_map, slope) for slope in slopes_list))
 
 slopes = [
     [
@@ -40,5 +36,5 @@ slopes = [
     ]
 ]
 
-for i in range(len(slopes)):
-    print(f"Part {i + 1} => {prod_slopes(input_data, slopes[i])}")
+for i, s in enumerate(slopes):
+    print(f"Part {i + 1} => {prod_slopes(input_data, s)}")

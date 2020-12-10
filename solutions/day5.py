@@ -1,4 +1,4 @@
-from tools.general import load_input
+from tools.general import load_input_list
 
 def resolve_bsp(bsp_code, low_char, high_char):
 
@@ -23,13 +23,13 @@ def seat_id(bp_code):
 
     return (8 * row) + col
 
-taken_seats = sorted(seat_id(s) for s in load_input("day5.txt").split('\n'))
+taken_seats = sorted(seat_id(s) for s in load_input_list("day5.txt").split('\n'))
 
 print(f"Part 1 => {taken_seats[-1]}")
 
 prev = taken_seats[0]
 for s in taken_seats[1:]:
-    if 2 == (s - prev):
+    if s - prev == 2:
         print(f"Part 2 => {s - 1}")
         break
     prev = s

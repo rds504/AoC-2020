@@ -13,19 +13,17 @@ xmas_data = load_input_ints("day9.txt")
 weakness_sum = None
 weakness_range = None
 
-for i in range(25, len(xmas_data)):
+for i, s in enumerate(xmas_data[25:]):
 
-    if not contains_pair_sum(xmas_data[i - 25:i], xmas_data[i]):
-        weakness_sum = xmas_data[i]
+    if not contains_pair_sum(xmas_data[i:i + 25], s):
+        weakness_sum = s
         break
 
 print(f"Part 1 => {weakness_sum}")
 
-for i in range(len(xmas_data)):
+for i, s in enumerate(xmas_data):
 
-    s = xmas_data[i]
     j = i
-
     while s < weakness_sum:
         j += 1
         s += xmas_data[j]

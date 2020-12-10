@@ -18,13 +18,13 @@ class BoundedIntValidator(FieldValidator):
     @property
     def lower(self):
         return self._lower
-    
+
     @property
     def upper(self):
         return self._upper
 
     def valid(self, data: str):
-    
+
         try:
             if self.lower <= int(data) <= self.upper:
                 return True
@@ -43,7 +43,7 @@ class SimpleRegexValidator(FieldValidator):
         return self._pattern
 
     def valid(self, data: str):
-        return self.pattern.match(data) != None
+        return self.pattern.match(data) is not None
 
 class ValueListValidator(FieldValidator):
 
@@ -74,7 +74,8 @@ class HeightValidator(FieldValidator):
 
             if units == "cm":
                 return self._cm_validator.valid(quant)
-            elif units == "in":
+
+            if units == "in":
                 return self._in_validator.valid(quant)
 
         return False
