@@ -15,27 +15,30 @@ DIRECTION_VECTORS = (
     ( 1,  1), # down + right
 )
 
-def first_seat_state(seating_map, position, direction, one_step_only):
+def count_occupied_nearby(seating_map, position, adjacent_only):
 
-    x ,  y = position
-    dx, dy = direction
-    x1, y1 = x + dx, y + dy
+    occupied = 0
+    x, y = position
 
-    while (not one_step_only) and seating_map.get((x1,y1)) == SEAT_NONE:
-        x1 += dx
-        y1 += dy
+    for dx, dy in DIRECTION_VECTORS:
 
-    return seating_map.get((x1,y1))
+        x1, y1 = x + dx, y + dy
 
-def update_state(seating_map, position, max_nearby_occupied, one_step_only):
+        if not adjacent_only:
+            while seating_map.get((x1,y1)) == SEAT_NONE:
+                x1, y1 = x1 + dx, y1 + dy
+
+        if seating_map.get((x1,y1)) == SEAT_OCCUPIED:
+            occupied += 1
+
+    return occupied
+
+def update_cell(seating_map, position, max_nearby_occupied, adjacent_only):
 
     if seating_map[position] == SEAT_NONE:
         return SEAT_NONE
 
-    occupied = 0
-    for direction in DIRECTION_VECTORS:
-        if first_seat_state(seating_map, position, direction, one_step_only) == SEAT_OCCUPIED:
-            occupied += 1
+    occupied = count_occupied_nearby(seating_map, position, adjacent_only)
 
     if seating_map[position] == SEAT_EMPTY:
         if occupied == 0:
@@ -49,23 +52,20 @@ def update_state(seating_map, position, max_nearby_occupied, one_step_only):
 
     return None
 
-def resolve_map(seating_map, max_nearby_occupied, one_step_only):
+def resolve_map(seating_map, max_nearby_occupied, adjacent_only):
 
-    map_stable = False
-    while not map_stable:
+    while True:
 
-        new_map = {}
-        map_stable = True
+        new_map = {
+            position : update_cell(seating_map,
+                                   position,
+                                   max_nearby_occupied,
+                                   adjacent_only)
+            for position in seating_map
+        }
 
-        for position in seating_map:
-
-            old_state = seating_map[position]
-            new_state = update_state(seating_map, position, max_nearby_occupied, one_step_only)
-
-            if new_state != old_state:
-                map_stable = False
-
-            new_map[position] = new_state
+        if new_map == seating_map:
+            break
 
         seating_map = new_map
 
