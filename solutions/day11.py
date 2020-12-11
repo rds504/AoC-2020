@@ -1,5 +1,9 @@
 from tools.general import load_input_map
 
+SEAT_EMPTY    = 'L'
+SEAT_OCCUPIED = '#'
+SEAT_NONE     = '.'
+
 DIRECTION_VECTORS = (
     (-1, -1), # up + left
     ( 0, -1), # up
@@ -17,7 +21,7 @@ def first_seat_state(seating_map, position, direction, one_step_only):
     dx, dy = direction
     x1, y1 = x + dx, y + dy
 
-    while (not one_step_only) and seating_map.get((x1,y1)) == '.':
+    while (not one_step_only) and seating_map.get((x1,y1)) == SEAT_NONE:
         x1 += dx
         y1 += dy
 
@@ -25,23 +29,23 @@ def first_seat_state(seating_map, position, direction, one_step_only):
 
 def update_state(seating_map, position, max_nearby_occupied, one_step_only):
 
-    if seating_map[position] == '.':
-        return '.'
+    if seating_map[position] == SEAT_NONE:
+        return SEAT_NONE
 
     occupied = 0
     for direction in DIRECTION_VECTORS:
-        if first_seat_state(seating_map, position, direction, one_step_only) == '#':
+        if first_seat_state(seating_map, position, direction, one_step_only) == SEAT_OCCUPIED:
             occupied += 1
 
-    if seating_map[position] == 'L':
+    if seating_map[position] == SEAT_EMPTY:
         if occupied == 0:
-            return '#'
-        return 'L'
+            return SEAT_OCCUPIED
+        return SEAT_EMPTY
 
-    if seating_map[position] == '#':
+    if seating_map[position] == SEAT_OCCUPIED:
         if max_nearby_occupied <= occupied:
-            return 'L'
-        return '#'
+            return SEAT_EMPTY
+        return SEAT_OCCUPIED
 
     return None
 
@@ -68,7 +72,7 @@ def resolve_map(seating_map, max_nearby_occupied, one_step_only):
     return seating_map
 
 def count_occupied(seating_map):
-    return sum(value == '#' for value in seating_map.values())
+    return sum(value == SEAT_OCCUPIED for value in seating_map.values())
 
 input_map = load_input_map("day11.txt")
 
