@@ -1,8 +1,6 @@
 import re
 from tools.general import load_input_list
 
-INSTR_PATTERN = re.compile("^(N|S|E|W|L|R|F)([0-9]+)$")
-
 NORTH   = 'N'
 EAST    = 'E'
 SOUTH   = 'S'
@@ -30,7 +28,7 @@ def rotate_point(point, direction, degrees):
 
     x, y = point
     try:
-        while 0 < degrees:
+        while degrees > 0:
             x, y = {
                 LEFT  : (-y, x),
                 RIGHT : (y, -x)
