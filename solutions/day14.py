@@ -1,59 +1,52 @@
 import re
+from itertools import product
 from tools.general import load_input_list
 
-def set_bit(original, bit):
-    return original | (1 << bit)
+class BitmaskV1:
 
-def unset_bit(original, bit):
-    return original & ~(1 << bit)
+    def __init__(self, mask):
+        self._and_mask = int(mask.replace('X', '1'), 2)
+        self._or_mask  = int(mask.replace('X', '0'), 2)
 
-def apply_bitmask_to_value(mask, original):
+    def apply(self, value):
+        return (value & self._and_mask) | self._or_mask
 
-    for bit, val in enumerate(mask[::-1]):
-        if val == '1':
-            original = set_bit(original, bit)
-        elif val == '0':
-            original = unset_bit(original, bit)
+class BitmaskV2:
 
-    return original
+    def __init__(self, mask):
+        self._masks = list(zip(
+            (int(''.join(p), 2) for p in product(*('01' if b == 'X' else '1' for b in mask))),
+            (int(''.join(p), 2) for p in product(*('01' if b == 'X' else   b for b in mask)))
+        ))
 
-def apply_bitmask_to_address(mask, original):
+    def apply(self, value):
+        return ((value & and_mask) | or_mask for and_mask, or_mask in self._masks)
 
-    results = [original]
+def run_docking_program(program, chip_ver2 = False):
 
-    for bit, val in enumerate(mask[::-1]):
-        if val == '1':
-            results = [set_bit(r, bit) for r in results]
-        elif val == 'X':
-            results = [set_bit(r, bit) for r in results] + [unset_bit(r, bit) for r in results]
+    bitmask_pattern  = re.compile(r"^mask = ([01X]{36})$")
+    writemem_pattern = re.compile(r"^mem\[([0-9]+)\] = ([0-9]+)$")
 
-    return results
-
-def run_docking_program(program, chip_ver=1):
-
-    bitmask_pattern  = re.compile("^mask = ([01X]{36})$")
-    writemem_pattern = re.compile("^mem\[([0-9]+)\] = ([0-9]+)$")
-
-    bitmask = ""
+    bitmask = None
     mem_map = {}
 
     for line in program:
 
         match = bitmask_pattern.match(line)
         if match:
-            bitmask = match.group(1)
+            bitmask = (BitmaskV2 if chip_ver2 else BitmaskV1)(match.group(1))
             continue
 
         match = writemem_pattern.match(line)
         if not match:
             raise ValueError(f"Invalid instruction: {line}")
 
-        if chip_ver == 1:
-            mem_map[int(match.group(1))] = apply_bitmask_to_value(bitmask, int(match.group(2)))
-        else: # chip_ver == 2
+        if chip_ver2:
             value = int(match.group(2))
-            for addr in apply_bitmask_to_address(bitmask, int(match.group(1))):
+            for addr in bitmask.apply(int(match.group(1))):
                 mem_map[addr] = value
+        else:
+            mem_map[int(match.group(1))] = bitmask.apply(int(match.group(2)))
 
     return sum(mem_map.values())
 
