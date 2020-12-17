@@ -3,6 +3,14 @@ from functools import reduce
 from operator import mul
 from tools.general import load_input
 
+class ValidValues:
+
+    def __init__(self, bounds):
+        self._lo1, self._hi1, self._lo2, self._hi2 = [int(bound) for bound in bounds]
+
+    def __contains__(self, value):
+        return self._lo1 <= value <= self._hi1 or self._lo2 <= value <= self._hi2
+
 def parse_ticket_data(ticket_data):
 
     rule_pattern = re.compile(r"([a-z ]+): ([0-9]+)-([0-9]+) or ([0-9]+)-([0-9]+)")
@@ -20,7 +28,8 @@ def parse_ticket_data(ticket_data):
         elif parsing_mode == "rules":
             match = rule_pattern.match(line)
             if match:
-                field_rules[match.group(1)] = tuple(int(match.group(i)) for i in range(2, 6))
+                field, *bounds = match.groups()
+                field_rules[field] = ValidValues(bounds)
         elif line != "":
             ticket = [int(i) for i in line.split(',')]
             if parsing_mode == "yours":
@@ -29,10 +38,6 @@ def parse_ticket_data(ticket_data):
                 near_tickets.append(ticket)
 
     return (field_rules, your_ticket, near_tickets)
-
-def valid_value_for_field(rule, value):
-    lo1, hi1, lo2, hi2 = rule
-    return (lo1 <= value <= hi1) or (lo2 <= value <= hi2)
 
 def validate_tickets(rule_list, ticket_list):
 
@@ -45,8 +50,8 @@ def validate_tickets(rule_list, ticket_list):
 
         for field in ticket:
 
-            for rule in rule_list:
-                if valid_value_for_field(rule, field):
+            for valid_values in rule_list:
+                if field in valid_values:
                     break
             else:
                 invalid_fields.append(field)
@@ -62,13 +67,13 @@ def resolve_field_positions(field_rules, valid_ticket_list):
     field_positions       = {}
     field_valid_positions = {}
 
-    for field, rule in field_rules.items():
+    for field, valid_values in field_rules.items():
 
         valid_positions = set(range(len(valid_ticket_list[0])))
 
         for ticket in valid_ticket_list:
             for position, value in enumerate(ticket):
-                if not valid_value_for_field(rule, value):
+                if value not in valid_values:
                     valid_positions.remove(position)
 
         field_valid_positions[field] = valid_positions
