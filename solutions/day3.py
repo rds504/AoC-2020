@@ -1,5 +1,4 @@
-from functools import reduce
-from operator import mul
+from tools.arithmetic import product
 from tools.general import load_input_list
 
 def count_trees(tree_map, slope):
@@ -21,7 +20,7 @@ def count_trees(tree_map, slope):
 input_data = load_input_list("day3.txt")
 
 def prod_slopes(tree_map, slopes_list):
-    return reduce(mul, (count_trees(tree_map, slope) for slope in slopes_list))
+    return product(count_trees(tree_map, slope) for slope in slopes_list)
 
 slopes = [
     [

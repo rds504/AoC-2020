@@ -1,7 +1,7 @@
 import re
 from tools.general import load_input_list
 
-def run_program(program_code, swap_instr=None):
+def run_program(program_code, swap_instr = None):
 
     accumulator   = 0
     current_instr = 0
@@ -45,11 +45,13 @@ def run_program(program_code, swap_instr=None):
 
     return (terminated, accumulator)
 
+def make_program_terminate(program_code):
+    for swap_line in range(len(program_code)):
+        terms, accum = run_program(program_code, swap_line)
+        if terms:
+            return accum
+    return None
+
 code = load_input_list("day8.txt")
-
 print(f"Part 1 => {run_program(code)[1]}")
-
-for swap_line in range(len(code)):
-    terms, accum = run_program(code, swap_line)
-    if terms:
-        print(f"Part 2 => {accum}")
+print(f"Part 2 => {make_program_terminate(code)}")

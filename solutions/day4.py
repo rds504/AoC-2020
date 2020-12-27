@@ -80,6 +80,21 @@ class HeightValidator(FieldValidator):
 
         return False
 
+def count_valid_passports(passport_list, validator_map):
+
+    all_present, all_valid = 0, 0
+
+    for passport in passport_list:
+
+        fields = dict_from(passport.split())
+
+        if all(reqd_fld in fields for reqd_fld in validator_map):
+            all_present += 1
+            if all(validator.valid(fields[fld]) for fld, validator in validator_map.items()):
+                all_valid += 1
+
+    return all_present, all_valid
+
 input_data = load_input("day4.txt").split('\n\n')
 
 validators = {
@@ -92,17 +107,7 @@ validators = {
     'pid': SimpleRegexValidator("^[0-9]{9}$")
 }
 
-all_fields_present = 0
-all_fields_valid   = 0
-
-for passport in input_data:
-
-    fields = dict_from(passport.split())
-
-    if all(field in fields for field in validators):
-        all_fields_present += 1
-        if all(validators[field].valid(fields[field]) for field in validators):
-            all_fields_valid += 1
+all_fields_present, all_fields_valid = count_valid_passports(input_data, validators)
 
 print(f"Part 1 => {all_fields_present}")
 print(f"Part 2 => {all_fields_valid}")

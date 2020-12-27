@@ -23,13 +23,14 @@ def seat_id(bp_code):
 
     return (8 * row) + col
 
-taken_seats = sorted(seat_id(s) for s in load_input_list("day5.txt").split('\n'))
+def find_gap(seat_sequence):
+    prev = seat_sequence[0]
+    for s in seat_sequence[1:]:
+        if s - prev == 2:
+            return s - 1
+        prev = s
+    return None
 
+taken_seats = sorted(seat_id(s) for s in load_input_list("day5.txt"))
 print(f"Part 1 => {taken_seats[-1]}")
-
-prev = taken_seats[0]
-for s in taken_seats[1:]:
-    if s - prev == 2:
-        print(f"Part 2 => {s - 1}")
-        break
-    prev = s
+print(f"Part 2 => {find_gap(taken_seats)}")

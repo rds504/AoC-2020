@@ -1,4 +1,6 @@
-def find_binsearch(sorted_list: list, target):
+from typing import Dict, List
+
+def find_binsearch(sorted_list: list, target) -> int:
 
     lower, upper = 0, len(sorted_list) - 1
     while lower <= upper:
@@ -14,14 +16,14 @@ def find_binsearch(sorted_list: list, target):
 
     return -1
 
-def contains(haystack: list, needle, presorted=False):
+def contains(haystack: list, needle, presorted: bool = False) -> bool:
 
     if presorted:
         return find_binsearch(haystack, needle) != -1
 
     return needle in haystack
 
-def dict_from(data: list, separator=':'):
+def dict_from(data: List[str], separator: str = ':') -> Dict[str, str]:
 
     dictified = {}
 

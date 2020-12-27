@@ -1,13 +1,16 @@
 from tools.general import load_input
 
-sum_any = 0
-sum_all = 0
+def summarise_answers(group_answers):
 
-for group in load_input("day6.txt").split("\n\n"):
+    sum_any, sum_all = 0, 0
 
-    members = [set(i) for i in group.split('\n')]
-    sum_any += len(set.union(*members))
-    sum_all += len(set.intersection(*members))
+    for group in group_answers:
+        members = [set(i) for i in group.split('\n')]
+        sum_any += len(set.union(*members))
+        sum_all += len(set.intersection(*members))
 
-print(f"Part 1 => {sum_any}")
-print(f"Part 2 => {sum_all}")
+    return sum_any, sum_all
+
+answered_any, answered_all = summarise_answers(load_input("day6.txt").split("\n\n"))
+print(f"Part 1 => {answered_any}")
+print(f"Part 2 => {answered_all}")

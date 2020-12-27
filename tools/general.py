@@ -1,6 +1,7 @@
 from os import path
+from typing import Dict, List, Tuple
 
-def load_input(filename):
+def load_input(filename: str) -> str:
 
     input_data = ""
 
@@ -9,13 +10,13 @@ def load_input(filename):
 
     return input_data
 
-def load_input_list(filename):
+def load_input_list(filename: str) -> List[str]:
     return load_input(filename).split('\n')
 
-def load_input_ints(filename):
+def load_input_ints(filename: str) -> List[int]:
     return [int(i) for i in load_input_list(filename)]
 
-def load_input_map(filename):
+def load_input_map(filename: str) -> Dict[Tuple[int, int], str]:
 
     input_map = {}
 
